@@ -339,7 +339,7 @@ impl Adapter {
         config: &SetInterface,
     ) -> Result<()> {
         // Set the route with metric = 0 (highest priority / default)
-        self.set_route_with_metric(interface_addrs, config, 0)
+        self.set_route_with_metric(interface_addrs, config, 0, 1420)
     }
 
     /// Assigns this adapter an ip address and adds route(s) so that packets sent
@@ -350,6 +350,7 @@ impl Adapter {
         interface_addrs: &[IpNet],
         config: &SetInterface,
         metric: u32,
+        mtu: u32
     ) -> Result<()> {
         let luid = self.get_luid();
         unsafe {
@@ -431,7 +432,7 @@ impl Adapter {
             }
             ip_interface.UseAutomaticMetric = 0;
             ip_interface.Metric = metric;
-            ip_interface.NlMtu = 1420;
+            ip_interface.NlMtu = mtu;
             ip_interface.SitePrefixLength = 0;
             let err = SetIpInterfaceEntry(&mut ip_interface);
             if err != ERROR_SUCCESS {
